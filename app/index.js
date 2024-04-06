@@ -1,11 +1,10 @@
 const express = require('express');
 const http = require('http');
 const mongoose = require('mongoose');
+const {ApolloServer} = require('apollo-server-express');
 const { graphqlHTTP } = require('express-graphql');
-
-
-const schema = require('api/schema');
-const resolver = require('api/resolver');
+const typeDefs = require('api/schema');
+const resolvers = require('api/resolver');
 const app = express();
 
 module.exports = class Application {
@@ -16,10 +15,14 @@ module.exports = class Application {
 
     }
     ServerConfig(){
-        const server = http.createServer(app);
-        server.listen(config.port , () => {
-            console.log('server run on port 3000')
-        })
+        const server = new ApolloServer({typeDefs, resolvers})
+        server.start().then(() => {
+            server.applyMiddleware({app})
+            app.listen(config.port , () => {
+                console.log('server run on port 3000')
+            })
+          });
+       
     }
 
     DatabaseConfig() {
@@ -28,13 +31,7 @@ module.exports = class Application {
     }
 
     Routes() {
-       
-   
-        app.use('/graphql', graphqlHTTP({
-            schema,
-            rootValue:resolver,
-            graphiql: true,
-        })); 
+
     }
 
 }

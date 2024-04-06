@@ -1,7 +1,12 @@
-const resolver = {
-    user : () => {
-        return "ali"
-    }
+
+
+const resolvers = {
+    Query : {
+          user : () => {
+                return "ali"
+            }
+        },
+  
 }
 
-module.exports = resolver;
+module.exports = resolvers;
