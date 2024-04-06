@@ -5,6 +5,7 @@ const { graphqlHTTP } = require('express-graphql');
 
 
 const schema = require('api/schema');
+const resolver = require('api/resolver');
 const app = express();
 
 module.exports = class Application {
@@ -28,11 +29,7 @@ module.exports = class Application {
 
     Routes() {
        
-        const resolver = {
-            user : () => {
-                return "ali"
-            }
-        }
+   
         app.use('/graphql', graphqlHTTP({
             schema,
             rootValue:resolver,
