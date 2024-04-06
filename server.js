@@ -1,3 +1,5 @@
-const App = require('./app');
-global.config = require('./config');
+require('app-module-path').addPath(__dirname);
+const App = require('app');
+require('dotenv').config;
+global.config = require('config');
 new App()

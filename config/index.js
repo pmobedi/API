@@ -1,6 +1,6 @@
 const database = require('./database')
 module.exports = {
     database,
-    port : 3000,
+    port : process.env.API_SERVER_PORT ,
 
 }
