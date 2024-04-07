@@ -15,7 +15,13 @@ module.exports = class Application {
 
     }
     ServerConfig(){
-        const server = new ApolloServer({typeDefs, resolvers})
+        const server = new ApolloServer({typeDefs, resolvers, formatError(err) {
+            const data = err.originalError.data;
+            const code = err.originalError.code || 500 ;
+            const message = err.message || 'error';
+            return {data, status : code, message}
+
+        }})
         server.start().then(() => {
             server.applyMiddleware({app})
             app.listen(config.port , () => {
