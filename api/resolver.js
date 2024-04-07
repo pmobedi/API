@@ -5,7 +5,38 @@ const resolvers = {
     Query : {
           user : () => {
                 return "ali"
-            }
+            },
+            login : async (param, args) => {
+                const errors = [];
+                try {
+                    const user = await User.findOne({ phone : args.phone});
+                    if(!user) {
+                        errors.push({ message : 'کاربر در سیستم ثبت نام نکرده است'})
+                    }
+    
+                    if(errors.length > 0) {
+                        throw error;
+                    }
+                    const isValid = bcrypt.compareSync(args.password, user.password);
+                    if(!isValid){
+                        errors.push({ message : 'پسورد وارد شده اشتباه شده است'})
+                    }
+                    if(errors.length > 0) {
+                        throw error;
+                    }
+                    return{
+                        status : 200,
+                        message : 'ok',
+                    }
+    
+                } catch {
+                    const error = new Error('Input Error');
+                    error.code = 401,
+                    error.data = errors;
+                    throw error;
+                }
+            },
+   
         },
         Mutation : {
             register : async (param, args) => {
@@ -18,7 +49,14 @@ const resolvers = {
                     if(!validator.isLength(args.phone, { min : 10, max : 11 })) {
                         errors.push({ message : 'شماره همراه به درستی وارد نشده است'})
                     }
-    
+                    
+                    const user = await User.findOne({ phone: args.phone })
+                    if(user){
+                        errors.push({ message :'این شماره همراه قبلا در سیستم ثبت شده است'});
+                    }
+
+
+
         
                     if(errors.length > 0) {
                         throw error;
