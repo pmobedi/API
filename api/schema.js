@@ -10,7 +10,8 @@ type Mutation {
 }
 type operation {
     status : Int,
-    message : String
+    message : String,
+    token : String
 }
 `;
 

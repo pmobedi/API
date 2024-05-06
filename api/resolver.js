@@ -1,6 +1,7 @@
 const User = require('app/models/users');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const resolvers = {
     Query : {
           user : () => {
@@ -24,9 +25,10 @@ const resolvers = {
                     if(errors.length > 0) {
                         throw error;
                     }
-                    return{
-                        status : 200,
-                        message : 'ok',
+               
+              
+                    return {
+                        token : await User.CreateToken(user.id, 'Ef@t1368','1h')
                     }
     
                 } catch {
@@ -82,8 +84,15 @@ const resolvers = {
                 }
             },
     
-        }
+        },
+      
 }
+
+let CreateToken = async(id, SecretId, exp) => {
+        return await jwt.sign({id} , SecretId, {expiresIn : exp})
+}
+
+
 
 
         
