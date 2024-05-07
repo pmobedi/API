@@ -7,7 +7,8 @@ const resolvers = {
           user : () => {
                 return "ali"
             },
-            login : async (param, args) => {
+            login : async (param, args, {token}) => {
+                console.log(token);
                 const errors = [];
                 try {
                     const user = await User.findOne({ phone : args.phone});
