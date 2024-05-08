@@ -1,48 +1,39 @@
 const express = require('express');
-const http = require('http');
 const mongoose = require('mongoose');
-const {ApolloServer} = require('apollo-server-express');
-const { graphqlHTTP } = require('express-graphql');
+const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('api/schema');
 const resolvers = require('api/resolver');
+const User = require('app/models/users');
 const app = express();
-
 module.exports = class Application {
-    constructor(){
+    constructor() {
         this.ServerConfig();
         this.DatabaseConfig();
-        this.Routes();
-
-    }
-    ServerConfig(){
+        this.Routes();}
+    ServerConfig() {
         const server = new ApolloServer({typeDefs, resolvers, formatError(err) {
+            if(!err.originalError) {
+                return err;}         
             const data = err.originalError.data;
-            const code = err.originalError.code || 500 ;
+            const code = err.originalError.code || 500;
             const message = err.message || 'error';
-            return {data, status : code, message}
-
-        }, context: ({req}) => {
-            const token = req.headers['token'];
-            return {
-                token
-            };
-        }})
-        server.start().then(() => {
-            server.applyMiddleware({app})
-            app.listen(config.port , () => {
-                console.log('server run on port 3000')
-            })
-          });
-       
+            return { data, status : code, message}
+        }, 
+            context : async ({req}) => {
+                const secretId = config.secretId
+                const check = await User.CheckToken(req, secretId);  
+                return{
+                    secretId,
+                    check}}})
+        server.applyMiddleware({app})
+        app.listen(config.port, () => {
+            console.log(`server run on port ${config.port}`)
+        })
     }
-
     DatabaseConfig() {
         mongoose.Promise = global.Promise;
-        mongoose.connect(config.database.url);
-    }
-
+        mongoose.connect(config.database.url)}
     Routes() {
 
     }
-
 }
