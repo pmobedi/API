@@ -22,7 +22,12 @@ module.exports = class Application {
             context : async ({req}) => {
                 const secretId = config.secretId
                 const check = await User.CheckToken(req, secretId);  
+                let isAdmin = false;
+                if(check) {
+                    isAdmin = await User.findById(check.id)
+                }
                 return{
+                    isAdmin : isAdmin.level,
                     secretId,
                     check}}})
         server.applyMiddleware({app})

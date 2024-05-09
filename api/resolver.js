@@ -79,6 +79,33 @@ const resolvers = {
                     throw error;
                 }
             },
+            mutimedia : async(param, args, {check, isAdmin}) => {
+                    if(check && isAdmin){
+                        let errors= [];
+                            try{
+
+                                await Multimedia.create({
+                                    name ,
+                                    dir 
+                                })
+                                return {
+                                    status : 200,
+                                    message : 'تصاویر در رسانه ذخیره شد'
+                                }
+
+                            }catch{
+                                const error = new Error('Input Error');
+                                error.code = 401,
+                                error.data = errors;
+                                throw error;
+                            }
+                    }else{
+                        const error = new Error('Input Error');
+                        error.code = 401,
+                        error.data = [{ message : 'دسترسی شما به اطلاعات مسدود شده است'}];
+                        throw error;
+                    }
+            }
     
         },
       }
